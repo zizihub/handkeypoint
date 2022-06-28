@@ -1,0 +1,39 @@
+TASK: "Puff_Regression"
+DATASET:
+  ROOT_PATH: "/data/xuziyan/regression-engine/train_data"
+  NUM_REG: 1
+  TRAIN_MODE: "test"
+  SAMPLER: "Random"
+  FUNC: "RegressionDataset"
+  AUGMENTATION:
+    NAME: ""
+    AUTO: False
+
+MODEL:
+  NAME: "ghostnet"
+  PRETRAINED: True
+
+  HEAD:
+    NAME: ["BasicHead"]
+    MODE: "normal"
+    DROPOUT: 0.2
+
+INPUT:
+  SIZE: (128, 128)
+
+SOLVER:
+  OPTIMIZER:
+    NAME: "AdaBelief"
+    LR_START: 5e-3
+  LR_SCHEDULER:
+    NAME: "OneCycleLR"
+  LOSS:
+    NAME: ["MSELoss"]
+  ACCUMULATE_STEPS: 1
+
+MAX_EPOCH: 50
+NUM_WORKERS: 16
+BATCH_SIZE: 64
+DATE: "2021-12-06"
+EXTRA: ""
+KFOLD: False
