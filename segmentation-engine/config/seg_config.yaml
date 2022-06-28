@@ -1,0 +1,70 @@
+DATASET:
+  TRAIN_PATH:
+    [
+      "/data1/zhangziwei/datasets/PortraitDataset/video matting/VideoMatte240K_JPEG_SD/train",
+      "/data1/zhangziwei/datasets/PortraitDataset/image matting/HumanHalf",
+    ]
+  TEST_PATH:
+    [
+      "/data1/zhangziwei/datasets/PortraitDataset/video matting/VideoMatte240K_JPEG_SD/test",
+      "/data1/zhangziwei/datasets/PortraitDataset/image matting/PPM-100",
+    ]
+  NUM_CLASSES: 1
+  CLASSFUNC: "PortraitSegmentation"
+
+MODEL:
+  TEACHER_NET: "./log/Portrait Seg/2021-10-30/timm-mobilenetv3_small_minimal_025__Unetx16+oc(64, 64, 64, 32, 16)__sz512_dcfl"
+  PRETRAINED: "imagenet"
+  ENCODER:
+    # NAME: "hrnet18"
+    NAME: "timm-mobilenetv3_small_minimal_025"
+    # NAME: "DDRNet23_slim"
+    OUTPUT_STRIDE: 16
+  FPN:
+    NAME: ""
+    OUT_CHANNELS: 88
+    PANET: False
+    NORM: None
+    STACK: 3
+  DECODER:
+    # NAME: "DeepLabV3Plus"
+    # NAME: "DeepDualResolutionNet"
+    NAME: "Unet"
+    CHANNELS: (32,32,32,32,16)
+    # ASTROUS_RATES: (3, 5, 7)
+    # SPP: "LRASPP"
+  POSTPROCESS:
+    NAME: [""]
+    FC_DIM: 512
+    NUM_FC: 3
+    REDUCTION: 160
+  BLOCK: "BasicBlock"
+  # CONV2D: "SeparableConv2d"
+
+# INPUT
+INPUT:
+  SIZE: (512, 512)
+  CROP: (448, 448)
+
+# SOLVER
+SOLVER:
+  OPTIMIZER:
+    NAME: "AdaBelief"
+    LR: 1e-3
+    WARMUP_LR: 1e-5
+  LR_SCHEDULER:
+    NAME: "OneCycleLR"
+  # LOSS: "DC_and_Focal_loss"
+  LOSS: "KnowledgeDistillationLoss"
+  NUM_WORKERS: 16
+  BATCH_SIZE: 24
+  ACC_STEP: 1
+  KD:
+    ALPHA: 0.9
+    BETA: 0.1
+    TEMPERATURE: 10
+    MODE: "combined"
+MAX_EPOCH: 50
+DATE: "2021-11-02"
+EXTRA: ""
+TASK: "Portrait Seg"

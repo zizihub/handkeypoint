@@ -1,0 +1,67 @@
+DATASET:
+  TRAIN_PATH: [
+      "/mnt/zhangziwei/datasets/CelebA-HQ-img",
+      # "/mnt/zhangziwei/datasets/CelebA-HQ-Occlusion",
+      # "/mnt/zhangziwei/datasets/CVPR21-SFPC-Crop",
+      # "/data2/zhangziwei/datasets/LaPa",
+    ]
+  TEST_PATH: [
+      "/mnt/zhangziwei/datasets/CelebA-HQ-img",
+      # "/mnt/zhangziwei/datasets/CelebA-HQ-Occlusion",
+      # "/data2/zhangziwei/datasets/CVPR21-SFPC-Crop",
+      # "/data2/zhangziwei/datasets/CVPR21-SFPC",
+      # "/data2/zhangziwei/datasets/LaPa",
+    ]
+  NUM_CLASSES: 7
+  CLASSFUNC: "FaceMask"
+
+MODEL:
+  PRETRAINED: "imagenet"
+  ENCODER:
+    NAME: "resnet18"
+    OUTPUT_STRIDE: 16
+  FPN:
+    NAME: "BIFPN"
+    OUT_CHANNELS: 88
+    PANET: False
+    NORM: None
+    STACK: 3
+  DECODER:
+    NAME: "DeepLabV3Plus"
+    CHANNELS: (256,)
+    ASTROUS_RATES: (3, 5, 7)
+  POSTPROCESS:
+    NAME: ["SCSE"]
+    FC_DIM: 512
+    NUM_FC: 3
+    REDUCTION: 16
+  BLOCK: "BasicBlock"
+  # CONV2D: "SeparableConv2d"
+
+# INPUT
+INPUT:
+  SIZE: (256, 256)
+  CROP: (224, 224)
+
+# SOLVER
+SOLVER:
+  OPTIMIZER:
+    NAME: "AdaBelief"
+    LR: 1e-3
+    WARMUP_LR: 1e-5
+  LR_SCHEDULER:
+    NAME: "OneCycleLR"
+  # LOSS: "KnowledgeDistillationLoss"
+  LOSS: "DC_and_Focal_loss"
+  NUM_WORKERS: 16
+  BATCH_SIZE: 64
+  ACC_STEP: 1
+  KD:
+    ALPHA: 0.9
+    BETA: 0.1
+    TEMPERATURE: 10
+    MODE: "soft target"
+MAX_EPOCH: 50
+DATE: "2021-11-02"
+EXTRA: ""
+TASK: "Face-7"

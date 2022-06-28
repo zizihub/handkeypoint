@@ -1,0 +1,57 @@
+DATASET:
+  TRAIN_PATH: [
+    "/mnt/xuziyan/sky_dataset",
+    "/mnt/xuziyan/ADE20K_sky",
+    "/mnt/xuziyan/Cityscapes"
+    ]
+  TEST_PATH: [
+    "/mnt/xuziyan/sky_dataset",
+    "/mnt/xuziyan/ADE20K_sky",
+    "/mnt/xuziyan/Cityscapes"
+    ]
+  NUM_CLASSES: 1
+  CLASSFUNC: "SkyParsing"
+
+
+MODEL:
+  PRETRAINED: "imagenet"
+  ENCODER:
+    NAME: "DDRNet23_slim"
+    OUTPUT_STRIDE: 8
+  FPN:
+    NAME: ""
+    OUT_CHANNELS: 88
+    PANET: False
+    NORM: None
+    STACK: 3
+  DECODER:
+    NAME: "DeepDualResolutionNet"
+    CHANNELS: (128,)
+  POSTPROCESS:
+    NAME: [""]
+    FC_DIM: 512
+    NUM_FC: 3
+    REDUCTION: 16
+  BLOCK: "BasicBlock"
+
+# INPUT
+INPUT:
+  SIZE: (128, 128)
+  CROP: (112, 112)
+
+# SOLVER
+SOLVER:
+  OPTIMIZER:
+    NAME: "AdaBelief"
+    LR: 2e-3
+    WARMUP_LR: 1e-5
+  LR_SCHEDULER:
+    NAME: "OneCycleLR"
+  LOSS: "DC_and_Focal_loss"
+  NUM_WORKERS: 0
+  BATCH_SIZE: 16
+  ACC_STEP: 1
+MAX_EPOCH: 50
+DATE: "2021-12-06"
+EXTRA: ""
+TASK: "SKY"
